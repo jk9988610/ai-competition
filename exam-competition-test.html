@@ -1,0 +1,1234 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>试卷竞赛测试</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background: #f5f7fa;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .header {
+        background: white;
+        border: 1px solid #dcdfe6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .header h1 {
+        color: #409eff;
+        margin: 0;
+      }
+
+      .header p {
+        color: #666;
+        margin: 10px 0;
+      }
+
+      .control-panel {
+        background: white;
+        border: 1px solid #dcdfe6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .status-panel {
+        background: white;
+        border: 1px solid #dcdfe6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .log-panel {
+        background: white;
+        border: 1px solid #dcdfe6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .ai-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .ai-card {
+        background: white;
+        border: 1px solid #dcdfe6;
+        border-radius: 8px;
+        padding: 15px;
+      }
+
+      .ai-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #409eff;
+      }
+
+      .ai-status {
+        margin: 10px 0;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+
+      .status-ready {
+        background: #f0f9ff;
+        color: #67c23a;
+      }
+
+      .status-working {
+        background: #e6f7ff;
+        color: #1890ff;
+      }
+
+      .status-error {
+        background: #fef0f0;
+        color: #f56c6c;
+      }
+
+      .ai-content {
+        margin: 10px 0;
+        font-size: 13px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+      }
+
+      .log-content {
+        background: #f9f9f9;
+        border: 1px solid #e4e7ed;
+        border-radius: 4px;
+        padding: 15px;
+        font-family: monospace;
+        font-size: 12px;
+        white-space: pre-wrap;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .log-success {
+        color: #67c23a;
+      }
+
+      .log-error {
+        color: #f56c6c;
+      }
+
+      .log-info {
+        color: #1890ff;
+      }
+
+      .log-warning {
+        color: #e6a23c;
+      }
+
+      button {
+        padding: 12px 24px;
+        background: #409eff;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 5px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background: #66b1ff;
+      }
+
+      button:disabled {
+        background: #909399;
+        cursor: not-allowed;
+      }
+
+      .big-button {
+        padding: 20px 40px;
+        font-size: 18px;
+        background: linear-gradient(135deg, #409eff, #66b1ff);
+      }
+
+      .big-button:hover {
+        background: linear-gradient(135deg, #66b1ff, #409eff);
+      }
+
+      .results-panel {
+        background: white;
+        border: 1px solid #dcdfe6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .ranking-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        margin: 5px 0;
+        background: #f9f9f9;
+        border-radius: 4px;
+      }
+
+      .ranking-medal {
+        font-size: 24px;
+        margin-right: 10px;
+      }
+
+      .cumulative-controls {
+        margin: 15px 0;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .sort-btn {
+        padding: 8px 16px;
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.3s;
+      }
+
+      .sort-btn:hover {
+        background: #e0e0e0;
+      }
+
+      .sort-btn.active {
+        background: #409eff;
+        color: white;
+        border-color: #409eff;
+      }
+
+      .cumulative-stats {
+        display: grid;
+        grid-template-columns: 80px 120px 60px 60px 60px 80px 80px;
+        gap: 5px;
+        align-items: center;
+        padding: 8px;
+        border-bottom: 1px solid #eee;
+        font-size: 12px;
+      }
+
+      .cumulative-stats.header {
+        font-weight: bold;
+        background: #f9f9f9;
+      }
+
+      .history-panel {
+        background: white;
+        border: 1px solid #dcdfe6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+      }
+
+      .history-item:last-child {
+        border-bottom: none;
+      }
+
+      .history-time {
+        color: #666;
+        font-size: 12px;
+      }
+
+      .history-info {
+        flex-grow: 1;
+        margin: 0 15px;
+      }
+
+      .history-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn-small {
+        padding: 4px 8px;
+        font-size: 12px;
+        background: #409eff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .btn-small:hover {
+        background: #66b1ff;
+      }
+
+      .btn-danger {
+        background: #f56c6c;
+      }
+
+      .btn-danger:hover {
+        background: #f78989;
+      }
+
+      .ranking-name {
+        font-weight: bold;
+        flex-grow: 1;
+      }
+
+      .ranking-score {
+        color: #409eff;
+        font-weight: bold;
+      }
+
+      .feature-highlight {
+        background: #fff7e6;
+        border: 1px solid #e6a23c;
+        border-radius: 4px;
+        padding: 15px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🤖 AI问答竞赛测试</h1>
+        <p>出题-随机分配-回答-评分-排名</p>
+      </div>
+
+      <div class="feature-highlight">
+        <h3>竞赛流程</h3>
+        <ul>
+          <li><strong>阶段1</strong>: 4个AI随机顺序出题（每人1题）</li>
+          <li><strong>阶段2</strong>: 按出题顺序循环分配题目作答</li>
+          <li><strong>阶段3</strong>: 出题者对答案进行评分（含详细理由）</li>
+          <li><strong>阶段4</strong>: 统计各AI平均得分并排名</li>
+        </ul>
+      </div>
+
+      <div class="control-panel">
+        <h3>竞赛控制</h3>
+        <div style="margin-bottom: 15px;">
+          <label><strong>竞赛主题：</strong></label>
+          <input type="text" id="competition-theme" value="人工智能" placeholder="请输入竞赛主题" style="width: 200px; padding: 5px; margin-left: 10px;">
+          <button onclick="updateTheme()" class="small-button">更新主题</button>
+        </div>
+        <button onclick="startCompetition()" id="start-btn" class="big-button">开始AI问答竞赛</button>
+        <button onclick="resumeCompetition()" id="resume-btn" disabled>
+          继续比赛
+        </button>
+        <button onclick="clearCheckpoint()" id="clear-btn" class="small-button">
+          清除断点
+        </button>
+        <button onclick="exportCheckpoint()" id="export-checkpoint-btn" class="small-button">
+          导出断点
+        </button>
+        <button onclick="importCheckpoint()" id="import-checkpoint-btn" class="small-button">
+          导入断点
+        </button>
+        <div style="margin-top: 10px;">
+          <label>AI窗口字体大小：</label>
+          <select id="font-size-select" onchange="changeAIFontSize(this.value)">
+            <option value="12px">小</option>
+            <option value="13px" selected>中</option>
+            <option value="14px">大</option>
+            <option value="15px">特大</option>
+          </select>
+        </div>
+        <div style="margin-top: 10px;">
+          <label><strong>📦 Git备份：</strong></label>
+          <button onclick="performGitBackup()" class="small-button">立即备份</button>
+          <button onclick="syncFromGit()" class="small-button">同步数据</button>
+          <button onclick="showBackupHistory()" class="small-button">备份历史</button>
+        </div>
+        <div id="progress-text">准备就绪</div>
+      </div>
+
+      <div class="history-panel">
+        <h3>📚 历史记录</h3>
+        <div id="history-list"></div>
+      </div>
+
+      <div class="status-panel">
+        <h3>AI选手状态</h3>
+        <div class="ai-grid" id="ai-grid"></div>
+      </div>
+
+      <div class="results-panel" id="results-panel" style="display: none">
+        <h3>🏆 最终排名</h3>
+        <div id="ranking-list"></div>
+
+        <h3>📊 累积名次统计</h3>
+        <div class="cumulative-controls">
+            <button onclick="showCumulativeRanking('gold')" class="sort-btn active" data-sort="gold">🥇 按金牌排序</button>
+            <button onclick="showCumulativeRanking('silver')" class="sort-btn" data-sort="silver">🥈 按银牌排序</button>
+            <button onclick="showCumulativeRanking('bronze')" class="sort-btn" data-sort="bronze">🥉 按铜牌排序</button>
+            <button onclick="showCumulativeRanking('total')" class="sort-btn" data-sort="total">📈 按总分排序</button>
+            <button onclick="showCumulativeRanking('avg')" class="sort-btn" data-sort="avg">💯 按平均分排序</button>
+        </div>
+        <div id="cumulative-ranking-list"></div>
+    </div>
+
+    <!-- 历史记录查看模态框 -->
+    <div id="history-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: relative; width: 90%; height: 90%; margin: 2% auto; background: white; border-radius: 8px; overflow: hidden;">
+            <div style="padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                <h3>📖 历史比赛详情</h3>
+                <div>
+                    <button onclick="exportHistoryResult()" class="btn-small">📥 导出结果</button>
+                    <button onclick="closeHistoryModal()" class="btn-small btn-danger">✖ 关闭</button>
+                </div>
+            </div>
+            <div id="history-content" style="padding: 20px; height: calc(100% - 80px); overflow-y: auto;">
+                <!-- 历史内容将在这里显示 -->
+            </div>
+        </div>
+    </div>
+
+      <div class="log-panel">
+        <h3>竞赛日志</h3>
+        <div class="log-content" id="log-content"></div>
+      </div>
+    </div>
+
+    <script src="git-manager.js"></script>
+    <script src="ai-exam-competition-engine.js"></script>
+    <script>
+      let competition = null;
+      let currentHistoryId = null;
+      let gitManager = null;
+
+      function initializeCompetition() {
+        competition = new AIExamCompetition();
+
+        // 初始化Git管理器
+        gitManager = new GitManager();
+
+        competition.onLogCallback = (message, type) => {
+          addLog(message, type);
+        };
+
+        competition.onStatusUpdateCallback = (playerId, status) => {
+          updateAIStatus(playerId, status);
+        };
+
+        window.updateAIDetailContent = (playerId, type, content) => {
+          updateAIDetail(playerId, type, content);
+        };
+
+        competition.setupPlayers(['deepseek', 'claude', 'grok', 'chatgpt']);
+        renderAIGrid();
+        addLog("系统已准备就绪", "success");
+
+        updateCheckpointButtons();
+      }
+
+      function updateCheckpointButtons() {
+        const storageOk =
+          competition &&
+          competition.isCheckpointStorageAvailable &&
+          competition.isCheckpointStorageAvailable();
+        const has =
+          storageOk &&
+          competition &&
+          competition.hasCheckpoint &&
+          competition.hasCheckpoint();
+        document.getElementById("resume-btn").disabled = !has;
+        document.getElementById("clear-checkpoint-btn").disabled = !has;
+        document.getElementById("export-checkpoint-btn").disabled = !has;
+
+        if (!storageOk) {
+          addLog(
+            "检测到断点存储不可用（常见于直接用file://打开）。建议用本地HTTP服务器方式打开页面，否则无法断点续跑。",
+            "warning",
+          );
+        } else if (has) {
+          addLog(
+            '检测到上次比赛断点：可以点击"继续比赛"从断点恢复。',
+            "warning",
+          );
+        }
+      }
+
+      function renderAIGrid() {
+        const grid = document.getElementById("ai-grid");
+        grid.innerHTML = competition.players
+          .map(
+            (player) => `
+                <div class="ai-card">
+                    <div class="ai-title">${player.name}</div>
+                    <div class="ai-status status-ready" id="status-${player.id}">准备就绪</div>
+                    <div class="ai-content">
+                        <div><strong id="question-label-${player.id}">出题内容：</strong></div>
+                        <div id="question-${player.id}">等待出题...</div>
+                        <div style="margin-top:8px;"><strong id="answer-label-${player.id}">收到答案：</strong></div>
+                        <div id="answer-${player.id}">等待其他AI回答...</div>
+                        <div style="margin-top:8px;"><strong id="scoring-label-${player.id}">评分内容：</strong></div>
+                        <div id="scoring-${player.id}">等待评分...</div>
+                    </div>
+                </div>
+            `,
+          )
+          .join("");
+      }
+
+      function updateAIStatus(playerId, status) {
+        const el = document.getElementById(`status-${playerId}`);
+        if (!el) return;
+        el.textContent = status;
+        el.className = `ai-status ${getStatusClass(status)}`;
+      }
+
+      function updateAIDetail(playerId, type, content) {
+        const el = document.getElementById(`${type}-${playerId}`);
+        if (!el) return;
+        el.textContent = content;
+      }
+
+      function getStatusClass(status) {
+        if (status.includes("中")) return "status-working";
+        if (status.includes("失败") || status.includes("错误"))
+          return "status-error";
+        return "status-ready";
+      }
+
+      function addLog(message, type = "info") {
+        const logContent = document.getElementById("log-content");
+        const timestamp = new Date().toLocaleTimeString();
+        const div = document.createElement("div");
+        div.className = `log-${type}`;
+        div.textContent = `[${timestamp}] ${message}`;
+        logContent.appendChild(div);
+        logContent.scrollTop = logContent.scrollHeight;
+      }
+
+      async function startCompetition(resume = false) {
+        if (!competition) {
+          initializeCompetition();
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+
+        document.getElementById("start-btn").disabled = true;
+        document.getElementById("results-panel").style.display = "none";
+        document.getElementById("progress-text").textContent = "竞赛进行中...";
+
+        try {
+          await competition.run({ resume });
+          showResults();
+          document.getElementById("progress-text").textContent = "竞赛完成";
+        } catch (e) {
+          addLog(`竞赛失败: ${e.message}`, "error");
+          addLog(
+            "如果你刚提高了额度或修复了API问题，可以点击“继续比赛”从断点恢复。",
+            "warning",
+          );
+          document.getElementById("progress-text").textContent = "竞赛失败";
+        } finally {
+          document.getElementById("start-btn").disabled = false;
+          updateCheckpointButtons();
+        }
+      }
+
+      async function resumeCompetition() {
+        await startCompetition(true);
+      }
+
+      function clearCheckpoint() {
+        if (!competition) {
+          initializeCompetition();
+        }
+        if (competition && competition.clearCheckpoint) {
+          competition.clearCheckpoint();
+        }
+        addLog("断点已清除", "success");
+        updateCheckpointButtons();
+      }
+
+      function showResults() {
+        const panel = document.getElementById("results-panel");
+        const list = document.getElementById("ranking-list");
+        panel.style.display = "block";
+
+        const ranking = competition.finalRanking || [];
+        list.innerHTML = ranking
+          .map((r, idx) => {
+            const medal =
+              idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : "  ";
+            return `
+                    <div class="ranking-item">
+                        <div style="display:flex; align-items:center;">
+                            <span class="ranking-medal">${medal}</span>
+                            <span class="ranking-name">${r.name}</span>
+                        </div>
+                        <span class="ranking-score">${Number(r.avgScore).toFixed(2)}分</span>
+                    </div>
+                `;
+          })
+          .join("");
+
+        // 显示累积统计
+        showCumulativeRanking('gold');
+
+        // 保存历史记录
+        saveHistory();
+
+        // 自动备份到Git
+        if (gitManager) {
+          setTimeout(async () => {
+            addLog('🔄 比赛结束，开始自动备份...', 'info');
+            await performGitBackup();
+          }, 2000);
+        }
+      }
+
+      function showCumulativeRanking(sortBy) {
+        const list = document.getElementById("cumulative-ranking-list");
+        const ranking = competition.getCumulativeRanking(sortBy);
+
+        // 更新按钮状态
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        document.querySelector(`[data-sort="${sortBy}"]`).classList.add('active');
+
+        // 表头
+        let html = `
+          <div class="cumulative-stats header">
+            <div>排名</div>
+            <div>AI名称</div>
+            <div>🥇金牌</div>
+            <div>🥈银牌</div>
+            <div>🥉铜牌</div>
+            <div>总分</div>
+            <div>平均分</div>
+          </div>
+        `;
+
+        // 数据行
+        ranking.forEach((stats, idx) => {
+          const avgScore = stats.competitions > 0 ? (stats.totalScore / stats.competitions).toFixed(2) : '0.00';
+          const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
+
+          html += `
+            <div class="cumulative-stats">
+              <div>${medal}</div>
+              <div>${stats.name}</div>
+              <div>${stats.goldCount}</div>
+              <div>${stats.silverCount}</div>
+              <div>${stats.bronzeCount}</div>
+              <div>${stats.totalScore.toFixed(2)}</div>
+              <div>${avgScore}</div>
+            </div>
+          `;
+        });
+
+        list.innerHTML = html;
+      }
+
+      function resetCompetition() {
+        competition = null;
+        document.getElementById("log-content").innerHTML = "";
+        document.getElementById("results-panel").style.display = "none";
+        document.getElementById("progress-text").textContent = "准备就绪";
+        initializeCompetition();
+        addLog("竞赛已重置（历史记录和断点保留）", "info");
+      }
+
+      function exportResults() {
+        if (!competition) {
+          addLog("没有可导出的结果", "error");
+          return;
+        }
+
+        const payload = {
+          timestamp: new Date().toISOString(),
+          competition: "AI问答竞赛测试",
+          data: {
+            questions: competition.questions,
+            answers: competition.answers,
+            scores: competition.scores,
+            questionAssignments: competition.questionAssignments,
+            finalRanking: competition.finalRanking,
+          },
+        };
+
+        const blob = new Blob([JSON.stringify(payload, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `ai-qa-competition-results-${new Date().toISOString().split("T")[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        addLog("结果已导出", "success");
+      }
+
+      function exportCheckpoint() {
+        if (!competition) {
+          addLog("没有可导出的断点", "error");
+          return;
+        }
+
+        const checkpointData = competition.loadCheckpoint();
+        if (!checkpointData) {
+          addLog("没有找到断点数据", "error");
+          return;
+        }
+
+        const payload = {
+          timestamp: new Date().toISOString(),
+          competition: "AI问答竞赛测试",
+          type: "checkpoint",
+          version: checkpointData.version,
+          savedAt: checkpointData.savedAt,
+          data: checkpointData,
+        };
+
+        const blob = new Blob([JSON.stringify(payload, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `ai-qa-competition-checkpoint-${new Date().toISOString().split("T")[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        addLog("断点已导出", "success");
+      }
+
+      function importCheckpoint() {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".json";
+
+        input.onchange = function (event) {
+          const file = event.target.files[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            try {
+              const content = e.target.result;
+              const parsed = JSON.parse(content);
+
+              // 验证文件格式
+              if (!parsed || parsed.type !== "checkpoint" || parsed.competition !== "AI问答竞赛测试") {
+                addLog("无效的断点文件格式", "error");
+                return;
+              }
+
+              const checkpointData = parsed.data;
+              if (!checkpointData || checkpointData.version !== 1) {
+                addLog("不支持的断点版本", "error");
+                return;
+              }
+
+              // 保存断点到 localStorage
+              if (!competition) {
+                initializeCompetition();
+              }
+
+              localStorage.setItem(
+                competition.checkpointKey,
+                JSON.stringify(checkpointData),
+              );
+              addLog(
+                `断点已导入，保存时间: ${checkpointData.savedAt}`,
+                "success",
+              );
+
+              // 更新按钮状态
+              updateCheckpointButtons();
+            } catch (error) {
+              addLog(`导入失败: ${error.message}`, "error");
+            }
+          };
+
+          reader.readAsText(file);
+        };
+
+        input.click();
+      }
+
+      window.onload = function () {
+        initializeCompetition();
+        loadHistory();
+        loadAIFontSize();
+        loadTheme();
+      };
+
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+          updateCheckpointButtons();
+        }
+      });
+
+      // 历史记录功能
+      function saveHistory() {
+        try {
+          const historyData = {
+            id: Date.now().toString(),
+            timestamp: new Date().toLocaleString(),
+            finalRanking: competition.finalRanking,
+            cumulativeStats: competition.cumulativeStats,
+            players: competition.players.map(p => ({
+              id: p.id,
+              name: p.name,
+              status: p.status,
+              authoredQuestion: p.authoredQuestion,
+              answers: p.answers,
+              finalScore: p.finalScore
+            })),
+            questions: competition.questions,
+            answers: competition.answers,
+            scores: competition.scores
+          };
+
+          let history = JSON.parse(localStorage.getItem('AICompetitionHistory') || '[]');
+          history.unshift(historyData);
+
+          // 只保留最近20条记录
+          if (history.length > 20) {
+            history = history.slice(0, 20);
+          }
+
+          localStorage.setItem('AICompetitionHistory', JSON.stringify(history));
+          loadHistory();
+        } catch (e) {
+          console.error('保存历史记录失败:', e);
+        }
+      }
+
+      function loadHistory() {
+        const historyList = document.getElementById('history-list');
+        try {
+          const history = JSON.parse(localStorage.getItem('AICompetitionHistory') || '[]');
+
+          if (history.length === 0) {
+            historyList.innerHTML = '<div style="color: #999; text-align: center; padding: 20px;">暂无历史记录</div>';
+            return;
+          }
+
+          historyList.innerHTML = history.map(item => {
+            const winner = item.finalRanking[0];
+            return `
+              <div class="history-item">
+                <div class="history-time">${item.timestamp}</div>
+                <div class="history-info">
+                  🏆 冠军: ${winner.name} (${winner.avgScore.toFixed(2)}分)
+                </div>
+                <div class="history-actions">
+                  <button onclick="viewHistory('${item.id}')" class="btn-small">📖 查看</button>
+                  <button onclick="deleteHistory('${item.id}')" class="btn-small btn-danger">🗑️ 删除</button>
+                </div>
+              </div>
+            `;
+          }).join('');
+        } catch (e) {
+          historyList.innerHTML = '<div style="color: #f56c6c; text-align: center; padding: 20px;">加载历史记录失败</div>';
+        }
+      }
+
+      function viewHistory(historyId) {
+        try {
+          const history = JSON.parse(localStorage.getItem('AICompetitionHistory') || '[]');
+          const historyData = history.find(item => item.id === historyId);
+
+          if (!historyData) {
+            alert('历史记录不存在');
+            return;
+          }
+
+          currentHistoryId = historyId;
+          const content = document.getElementById('history-content');
+
+          // 重建历史页面内容
+          let html = `
+            <div style="background: #f5f7fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h4>📅 比赛时间: ${historyData.timestamp}</h4>
+            </div>
+
+            <div class="status-panel" style="margin-bottom: 20px;">
+              <h3>🤖 AI选手状态</h3>
+              <div class="ai-grid">
+          `;
+
+          // AI状态
+          historyData.players.forEach(player => {
+            html += `
+              <div class="ai-card">
+                <div class="ai-title">${player.name}</div>
+                <div class="ai-status status-ready">${player.status}</div>
+                <div class="ai-content">
+                  <div><strong>出题内容：</strong></div>
+                  <div>${player.authoredQuestion ? JSON.stringify(player.authoredQuestion.question || '') : '无出题'}</div>
+                  <div style="margin-top:8px;"><strong>回答内容：</strong></div>
+                  <div>${Object.values(player.answers || {}).join('\n') || '无回答'}</div>
+                </div>
+              </div>
+            `;
+          });
+
+          html += `
+              </div>
+            </div>
+
+            <div class="results-panel" style="display: block; background: white; border: 1px solid #dcdfe6; border-radius: 8px; padding: 20px;">
+              <h3>🏆 最终排名</h3>
+              <div style="margin-bottom: 20px;">
+          `;
+
+          // 排名
+          historyData.finalRanking.forEach((r, idx) => {
+            const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
+            html += `
+              <div class="ranking-item">
+                <div style="display:flex; align-items:center;">
+                  <span class="ranking-medal">${medal}</span>
+                  <span class="ranking-name">${r.name}</span>
+                </div>
+                <span class="ranking-score">${Number(r.avgScore).toFixed(2)}分</span>
+              </div>
+            `;
+          });
+
+          html += `
+              </div>
+            </div>
+          `;
+
+          content.innerHTML = html;
+          document.getElementById('history-modal').style.display = 'block';
+        } catch (e) {
+          alert('查看历史记录失败: ' + e.message);
+        }
+      }
+
+      function closeHistoryModal() {
+        document.getElementById('history-modal').style.display = 'none';
+        currentHistoryId = null;
+      }
+
+      function deleteHistory(historyId) {
+        if (confirm('确定要删除这条历史记录吗？')) {
+          try {
+            let history = JSON.parse(localStorage.getItem('AICompetitionHistory') || '[]');
+            history = history.filter(item => item.id !== historyId);
+            localStorage.setItem('AICompetitionHistory', JSON.stringify(history));
+            loadHistory();
+          } catch (e) {
+            alert('删除历史记录失败');
+          }
+        }
+      }
+
+      function exportHistoryResult() {
+        if (!currentHistoryId) {
+          alert('没有选择的历史记录');
+          return;
+        }
+
+        try {
+          const history = JSON.parse(localStorage.getItem('AICompetitionHistory') || '[]');
+          const historyData = history.find(item => item.id === currentHistoryId);
+
+          if (!historyData) {
+            alert('历史记录不存在');
+            return;
+          }
+
+          const exportData = {
+            competition: 'AI问答竞赛',
+            timestamp: historyData.timestamp,
+            data: {
+              finalRanking: historyData.finalRanking,
+              players: historyData.players,
+              questions: historyData.questions,
+              answers: historyData.answers,
+              scores: historyData.scores
+            }
+          };
+
+          const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+            type: 'application/json'
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `ai-competition-history-${historyData.timestamp.replace(/[\/\s:]/g, '-')}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          alert('导出失败: ' + e.message);
+        }
+      }
+
+      function changeAIFontSize(fontSize) {
+        // 保存到localStorage
+        localStorage.setItem('AIFontSize', fontSize);
+
+        // 更新所有AI窗口的字体大小
+        const aiContents = document.querySelectorAll('.ai-content');
+        aiContents.forEach(element => {
+          element.style.fontSize = fontSize;
+        });
+
+        addLog(`🔤 AI窗口字体大小已调整为: ${fontSize}`, 'info');
+      }
+
+      // 页面加载时恢复字体大小设置
+      function loadAIFontSize() {
+        const savedFontSize = localStorage.getItem('AIFontSize') || '13px';
+        document.getElementById('font-size-select').value = savedFontSize;
+
+        const aiContents = document.querySelectorAll('.ai-content');
+        aiContents.forEach(element => {
+          element.style.fontSize = savedFontSize;
+        });
+      }
+
+      // 主题管理功能
+      function updateTheme() {
+        const theme = document.getElementById('competition-theme').value.trim();
+        if (!theme) {
+          alert('请输入竞赛主题');
+          return;
+        }
+
+        // 保存主题到localStorage
+        localStorage.setItem('CompetitionTheme', theme);
+
+        // 更新竞赛实例的主题
+        if (competition) {
+          competition.setTheme(theme);
+        }
+
+        addLog(`🎯 竞赛主题已更新为: ${theme}`, 'info');
+      }
+
+      // 页面加载时恢复主题
+      function loadTheme() {
+        const savedTheme = localStorage.getItem('CompetitionTheme') || '人工智能';
+        document.getElementById('competition-theme').value = savedTheme;
+
+        if (competition) {
+          competition.setTheme(savedTheme);
+        }
+      }
+
+      // Git备份功能
+      async function performGitBackup() {
+        if (!gitManager) {
+          addLog('❌ Git管理器未初始化', 'error');
+          return;
+        }
+
+        addLog('🔄 开始备份到Gitee...', 'info');
+
+        try {
+          // 调用真正的Git备份服务器
+          const response = await fetch('http://localhost:3000/git-backup', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              command: 'backup',
+              message: 'AI竞赛数据手动备份'
+            })
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            addLog(`✅ ${result.message}`, 'success');
+            if (result.timestamp) {
+              addLog(`📅 备份时间: ${new Date(result.timestamp).toLocaleString()}`, 'info');
+            }
+          } else {
+            addLog(`❌ 备份失败: ${result.error}`, 'error');
+          }
+        } catch (error) {
+          addLog(`❌ 备份异常: ${error.message}`, 'error');
+          // 如果服务器不可用，回退到本地备份
+          addLog('⚠️ Git服务器不可用，使用本地备份', 'warning');
+          const localResult = await gitManager.performRealBackup('AI竞赛数据本地备份');
+          if (localResult.success) {
+            addLog(`✅ ${localResult.message}`, 'success');
+          }
+        }
+      }
+
+      async function syncFromGit() {
+        if (!gitManager) {
+          addLog('❌ Git管理器未初始化', 'error');
+          return;
+        }
+
+        addLog('🔄 开始从Gitee同步数据...', 'info');
+
+        try {
+          // 调用真正的Git同步服务器
+          const response = await fetch('http://localhost:3000/git-backup', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              command: 'sync'
+            })
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            addLog(`✅ ${result.message}`, 'success');
+            // 重新加载页面数据
+            setTimeout(() => {
+              loadHistory();
+              loadTheme();
+              loadAIFontSize();
+              addLog('🔄 页面数据已刷新', 'info');
+            }, 1000);
+          } else {
+            addLog(`❌ 同步失败: ${result.error}`, 'error');
+          }
+        } catch (error) {
+          addLog(`❌ 同步异常: ${error.message}`, 'error');
+          // 如果服务器不可用，回退到本地模拟
+          addLog('⚠️ Git服务器不可用，使用本地模拟同步', 'warning');
+          const localResult = await gitManager.syncFromRemote();
+          if (localResult.success) {
+            addLog(`✅ ${localResult.message}`, 'success');
+          }
+        }
+      }
+
+      function showBackupHistory() {
+        if (!gitManager) {
+          addLog('❌ Git管理器未初始化', 'error');
+          return;
+        }
+
+        const backups = gitManager.getBackupHistory();
+
+        if (backups.length === 0) {
+          alert('暂无备份历史');
+          return;
+        }
+
+        let historyText = '📦 备份历史记录：\n\n';
+        backups.forEach((backup, index) => {
+          const date = new Date(backup.timestamp).toLocaleString();
+          historyText += `${index + 1}. ${date} - ${backup.message}\n`;
+        });
+
+        // 创建一个可选择的备份列表
+        const backupList = backups.map((backup, index) =>
+          `<option value="${index}">${new Date(backup.timestamp).toLocaleString()} - ${backup.message}</option>`
+        ).join('');
+
+        const modalHtml = `
+          <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+            <div style="background: white; padding: 20px; border-radius: 8px; max-width: 600px; width: 90%;">
+              <h3>📦 备份历史</h3>
+              <select id="backup-select" style="width: 100%; height: 150px; margin: 10px 0;" multiple>
+                ${backupList}
+              </select>
+              <div style="margin-top: 15px;">
+                <button onclick="restoreFromBackup()" class="small-button">恢复选中备份</button>
+                <button onclick="closeBackupModal()" class="small-button">关闭</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        const modalDiv = document.createElement('div');
+        modalDiv.innerHTML = modalHtml;
+        modalDiv.id = 'backup-modal';
+        document.body.appendChild(modalDiv);
+      }
+
+      async function restoreFromBackup() {
+        const select = document.getElementById('backup-select');
+        if (!select.value) {
+          alert('请选择一个备份');
+          return;
+        }
+
+        const backupIndex = parseInt(select.value);
+
+        if (!gitManager) {
+          addLog('❌ Git管理器未初始化', 'error');
+          return;
+        }
+
+        if (confirm('确定要恢复这个备份吗？这将覆盖当前数据。')) {
+          addLog('🔄 开始恢复数据...', 'info');
+
+          try {
+            const result = await gitManager.restoreFromBackup(backupIndex);
+
+            if (result.success) {
+              addLog(`✅ ${result.message}`, 'success');
+              closeBackupModal();
+
+              // 重新加载页面
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            } else {
+              addLog(`❌ 恢复失败: ${result.error}`, 'error');
+            }
+          } catch (error) {
+            addLog(`❌ 恢复异常: ${error.message}`, 'error');
+          }
+        }
+      }
+
+      function closeBackupModal() {
+        const modal = document.getElementById('backup-modal');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // 自动备份功能
+      function enableAutoBackup() {
+        if (gitManager) {
+          gitManager.setAutoBackup(true);
+          addLog('🔄 自动备份已启用', 'info');
+        }
+      }
+
+      function disableAutoBackup() {
+        if (gitManager) {
+          gitManager.setAutoBackup(false);
+          addLog('⏸️ 自动备份已禁用', 'info');
+        }
+      }
+    </script>
+  </body>
+</html>
